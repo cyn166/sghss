@@ -1,0 +1,107 @@
+@startuml
+!theme plain
+
+' 1. USUÁRIOS E PERMISSÕES (Tabela Central)
+entity "USERS" as USERS {
+    *id : int <<PK>>
+    --
+    name : string
+    email : string
+    password : string
+    role : string  "admin, medico, paciente, enfermeiro"
+    is_active: bool
+    last_login_at: datetime
+    cpf : string
+    created_at : datetime
+}
+
+' 2. DADOS ESPECÍFICOS DE MÉDICOS
+entity "DOCTORS" as DOCTORS {
+    *id : int <<PK>>
+    user_id : int <<FK>>
+    --
+    crm : string
+    specialty : string
+    phone : string
+    available_hours : json "ex: {seg: 08-12, ter: 14-18}"
+}
+
+entity "NURSES" as NURSES {
+    *id : int <<PK>>
+    user_id : int <<FK>>
+    --
+    license_number : string
+    specialty : string
+    license_expiry_date: datetime
+    phone : string
+    available_hours : json "ex: {seg: 08-12, ter: 14-18}"
+}
+
+' 3. DADOS ESPECÍFICOS DE PACIENTES (Novo)
+entity "PATIENTS" as PATIENTS {
+    *id : int <<PK>>
+    user_id : int <<FK>>
+    --
+    phone : string
+    birth_date : date
+    address : string
+    emergency_contact: string
+    blood_type : string
+}
+
+' 4. AGENDAMENTOS (Consultas)
+entity "APPOINTMENTS" as APPOINTMENTS {
+    *id : int <<PK>>
+    patient_id : int <<FK>>
+    doctor_id : int <<FK>>
+    nurse_id : int <<FK>>
+    --
+    appointment_date : datetime
+    type : string "presencial, telemedicina"
+    notes : text
+    status : string "agendado, concluido, cancelado"
+    link_meet : string
+}
+
+' 5. PRONTUÁRIO MÉDICO (Novo - Obrigatório para VidaPlus)
+entity "MEDICAL_RECORDS" as RECORDS {
+    *id : int <<PK>>
+    appointment_id : int <<FK>>
+    --
+    diagnosis : text
+    treatment : text
+    prescription : text
+    notes : text "Anotações internas"
+    created_at : datetime
+}
+
+' 6. LOGS DE AUDITORIA (Novo - Requisito LGPD)
+entity "LOGS" as LOGS {
+    *id : int <<PK>>
+    user_id : int <<FK>> "Quem fez a ação"
+    --
+    action : string "CREATE, UPDATE, DELETE"
+    table_affected : string
+    description : text
+    ip_address : string
+    created_at : datetime
+}
+
+' RELACIONAMENTOS
+USERS ||--o| DOCTORS : "1:1 (é médico)"
+USERS ||--o| PATIENTS : "1:1 (é paciente)"
+USERS ||--o| NURSES : "1:1 (é enfermeiro)"
+
+DOCTORS ||--o{ APPOINTMENTS : "atende"
+NURSES ||--o{ APPOINTMENTS : "atende"
+PATIENTS ||--o{ APPOINTMENTS : "agenda"
+
+APPOINTMENTS ||--o| RECORDS : " gera prontuário"
+
+USERS ||--o{ LOGS : "realiza ação"
+APPOINTMENTS ||--o{ LOGS : "realiza ação"
+RECORDS ||--o{ LOGS : "realiza ação"
+
+
+
+@enduml
