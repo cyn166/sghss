@@ -112,13 +112,48 @@ A API segue os padrões REST. Todas as requisições devem incluir o header:
   "name": "Joana Paciente Teste",
   "email": "joana.teste@sghss.com",
   "password": "password",
-  "password_confirmation": "password",
   "role": "paciente",
   "cpf": "111.222.333-44",
-  "birth_date": "2000-01-01",
+  "birth_date": "01-01-2000",
   "phone": "21988887777",
   "address": "Rua Principal, 10",
-  "blood_type": "O+"
+  "blood_type": "O+",
+  "emergency_contact": "1199999999"
+}
+```
+
+#### Exemplo: Registro de Médico (`POST /api/register`)
+
+**Body:**
+```json
+{
+  "name": "Marcos Médico Teste",
+  "email": "marcos.teste@sghss.com",
+  "password": "password",
+  "role": "medico",
+  "cpf": "111.222.333-44",
+  "crm": "123762193",
+  "phone": "21988887777",
+  "specialty": "1399999999",
+  "available_hours": "{seg: 08-12, ter: 14-18}"
+}
+```
+
+#### Exemplo: Registro de Enfermeiro (`POST /api/register`)
+
+**Body:**
+```json
+{
+  "name": "Sofia Enfermeira Teste",
+  "email": "sofia.teste@sghss.com",
+  "password": "password",
+  "role": "enfermeiro",
+  "cpf": "111.222.333-44",
+  "license_number": "93456439",
+  "license_expiry_date": "09-10-2030"
+  "phone": "21988887777",
+  "specialty": "Geral",
+  "available_hours": "{seg: 08-12, ter: 14-18}"
 }
 ```
 
